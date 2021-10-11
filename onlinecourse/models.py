@@ -105,17 +105,18 @@ class Question(models.Model):
     # Foreign key to lesson
     # question text
     # question grade/mark
-    question_text = models.CharField(max_length=200)
-    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
-    
-    # <HINT> A sample model method to calculate if learner get the score of the question
-    def is_get_score(self, selected_ids):
-        all_answers = self.choice_set.filter(is_correct=True).count()
-        selected_correct = self.choice_set.filter(is_correct=True, id__in=selected_ids).count()
-        if all_answers == selected_correct:
-            return True
-        else:
-            return False
+    question = models.TextField()
+   
+   grade = models.IntegerField(default=0)
+   course = models.ManyToManyField(Course)
+
+   def is_get_score(self, selected_ids):
+      all_answers = self.choice_set.filter(is_correct=True).count()
+      selected_correct = self.choice_set.filter(is_correct=True, id__in=selected_ids).count()
+      if all_answers == selected_correct:
+          return True
+      else:
+          return False
 
 
 #  <HINT> Create a Choice Model with:
@@ -129,8 +130,11 @@ class Choice(models.Model):
 # One enrollment could have multiple submission
 # One submission could have multiple choices
 # One choice could belong to multiple submissions
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+   choice = models.TextField()
+   is_correct = models.BooleanField()
     
-    questions= models.ForeignKey(Question, on_delete=models.CASCADE)
+    
 class Submission(models.Model):
     enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE)
     choices = models.ManyToManyField(Choice)
